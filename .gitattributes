@@ -1,0 +1,3 @@
+# Normalize line endings: store LF in the repository regardless of the
+# contributor's operating system, so diffs stay clean on Windows and Unix.
+* text=auto eol=lf
