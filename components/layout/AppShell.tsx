@@ -13,10 +13,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
 
-  // Close the mobile sidebar after navigating
-  useEffect(() => {
+  // Close the mobile sidebar after navigating. This is React's recommended
+  // "adjust state when a prop changes" pattern — no effect needed.
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
     setSidebarOpen(false);
-  }, [pathname]);
+  }
 
   // Lock body scroll while the mobile sidebar is open
   useEffect(() => {

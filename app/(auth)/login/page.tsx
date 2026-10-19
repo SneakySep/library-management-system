@@ -37,9 +37,14 @@ export default function LoginPage() {
 
       if (error) throw error;
 
-      const next = (typeof window !== 'undefined'
-        ? new URLSearchParams(window.location.search).get('next')
-        : null) || '/books';
+      // Only follow same-site paths from ?next=. Anything absolute, or a
+      // protocol-relative "//host", would send the user to another site
+      // after sign-in (phishing) — fall back to the catalog instead.
+      const requestedNext = new URLSearchParams(window.location.search).get('next');
+      const next =
+        requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+          ? requestedNext
+          : '/books';
       router.push(next);
     } catch (err: any) {
       toast.error(err.message || 'Failed to sign in. Please try again.');
@@ -147,7 +152,7 @@ export default function LoginPage() {
             </div>
 
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/register" className="font-medium text-primary hover:underline">
                 Sign up
               </Link>
@@ -188,7 +193,7 @@ function ForgotPasswordForm({
       </div>
       <h2 className="text-3xl font-bold tracking-tight">Reset password</h2>
       <p className="text-muted-foreground mb-6">
-        Enter your email address and we'll send you a link to reset your password.
+        Enter your email address and we&apos;ll send you a link to reset your password.
       </p>
       <form onSubmit={onSubmit} className="w-full space-y-4">
         <div className="relative">
@@ -233,7 +238,7 @@ function ResetSent({
       </div>
       <h2 className="text-2xl font-bold">Check your email</h2>
       <p className="text-muted-foreground mb-6">
-        We've sent a password reset link to {resetEmail}.
+        We&apos;ve sent a password reset link to {resetEmail}.
       </p>
       <Button onClick={onBack} className="w-full">
         Back to sign in

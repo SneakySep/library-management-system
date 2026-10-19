@@ -15,8 +15,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // next-themes sets class/color-scheme on <html> before hydration to prevent
+  // a theme flash; suppressHydrationWarning lets React tolerate that
+  // intentional attribute difference on this element only.
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <a
           href="#main-content"

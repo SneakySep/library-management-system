@@ -79,7 +79,7 @@ export default function AdminSettingsPage() {
 
   if (settingsQuery.isLoading) {
     return (
-      <PageContainer width="narrow">
+      <PageContainer>
         <div className="h-8 w-40 animate-pulse rounded-lg bg-muted" />
         <div className="mt-2 h-4 w-72 animate-pulse rounded bg-muted" />
         <div className="mt-8 h-72 animate-pulse rounded-2xl bg-muted" />
@@ -88,7 +88,7 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <PageContainer width="narrow">
+    <PageContainer>
       {/* Header */}
       <PageHeader
         title="Settings"

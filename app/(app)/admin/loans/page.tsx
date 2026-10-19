@@ -39,6 +39,7 @@ import { cn } from '@/lib/utils';
 import { COVER_FALLBACK } from '@/lib/placeholder';
 import {
   daysLate,
+  daysLeft,
   isLoanOverdue,
   useAllLoans,
   useBookSearch,
@@ -75,7 +76,7 @@ function toDateInputValue(date: Date) {
 function LoanStatusBadge({ loan }: { loan: LoanRecord }) {
   if (loan.status === 'returned') return <Badge variant="secondary">Returned</Badge>;
   if (isLoanOverdue(loan)) return <Badge variant="destructive">Overdue</Badge>;
-  const days = Math.ceil((new Date(loan.due_date).getTime() - Date.now()) / 86_400_000);
+  const days = daysLeft(loan.due_date);
   if (days <= 3) return <Badge variant="warning">Due soon</Badge>;
   return <Badge variant="success">Active</Badge>;
 }

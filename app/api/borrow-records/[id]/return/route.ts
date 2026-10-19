@@ -4,11 +4,12 @@ import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Identify the signed-in user from their session cookies.
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -23,7 +24,7 @@ export async function POST(
     // Get the current record to verify it exists and is active
     const { data: record, error: fetchError } = await (admin.from('borrow_records') as any)
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('status', 'active')
       .single();
 
@@ -55,7 +56,7 @@ export async function POST(
         status: 'returned',
         returned_at: new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 

@@ -7,7 +7,7 @@ const DEFAULT_PAGE_SIZE = 20;
 
 export async function GET(req: Request) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') ?? '';
     const genre = searchParams.get('genre') ?? '';
@@ -99,7 +99,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const body = await req.json() as Partial<Record<string, unknown>>;
 
     const { data, error } = await (supabase.from('books') as any).insert([body]).select().single();

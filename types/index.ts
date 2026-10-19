@@ -30,6 +30,9 @@ export interface User {
   email?: string | null;
   role: UserRole;
   created_at: string;
+  // Auth metadata merged in by the admin users API
+  banned_until?: string | null;
+  last_sign_in_at?: string | null;
 }
 
 export interface BorrowRecord {

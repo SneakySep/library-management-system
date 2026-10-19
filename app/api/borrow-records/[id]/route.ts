@@ -8,10 +8,11 @@ import { createAdminClient } from '@/lib/supabase/admin';
  */
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createClient();
+    const { id } = await params;
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -44,7 +45,7 @@ export async function PATCH(
 
     const { data: record } = await (admin.from('borrow_records') as any)
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('status', 'active')
       .single();
 
@@ -54,7 +55,7 @@ export async function PATCH(
 
     const { data, error } = await (admin.from('borrow_records') as any)
       .update({ due_date: dueDate.toISOString() })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 

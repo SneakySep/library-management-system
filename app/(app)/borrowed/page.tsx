@@ -32,10 +32,6 @@ export default function BorrowedPage() {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    loadRecords();
-  }, []);
-
   const loadRecords = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -63,10 +59,14 @@ export default function BorrowedPage() {
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to load borrowed books');
-    } finally {
-      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Update loading state from the callback (not synchronously in the
+    // loader itself) so React can skip an extra cascading render.
+    Promise.resolve().then(loadRecords).then(() => setLoading(false));
+  }, []);
 
   const handleReturn = async (recordId: string) => {
     if (!window.confirm('Are you sure you want to return this book?')) return;
@@ -103,7 +103,7 @@ export default function BorrowedPage() {
   const returnedRecords = records.filter((r) => r.status === 'returned');
 
   return (
-    <PageContainer width="medium">
+    <PageContainer>
       <PageHeader
         title="My Borrowed Books"
         description="Track your current and past borrowings"

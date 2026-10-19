@@ -18,6 +18,27 @@ const nextConfig = {
       },
     ],
   },
+  // Baseline security headers on every response. The CSP deliberately only
+  // locks down directives that never need relaxing (framing, plugins, form
+  // targets, base URI); a full script-src policy needs per-request nonces
+  // and is a separate project.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          {
+            key: 'Content-Security-Policy',
+            value: "base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

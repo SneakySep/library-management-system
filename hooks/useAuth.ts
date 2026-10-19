@@ -10,6 +10,16 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const fetchUserProfile = useCallback(async (userId: string): Promise<User | null> => {
+    try {
+      const res = await fetch(`/api/users/${userId}`, { cache: 'no-store' });
+      if (!res.ok) return null;
+      return res.json();
+    } catch {
+      return null;
+    }
+  }, []);
+
   useEffect(() => {
     const supabase = createClient();
 
@@ -45,17 +55,7 @@ export function useAuth() {
     );
 
     return () => subscription.unsubscribe();
-  }, [router]);
-
-  const fetchUserProfile = async (userId: string): Promise<User | null> => {
-    try {
-      const res = await fetch(`/api/users/${userId}`, { cache: 'no-store' });
-      if (!res.ok) return null;
-      return res.json();
-    } catch {
-      return null;
-    }
-  };
+  }, [router, fetchUserProfile]);
 
   const signOut = useCallback(async () => {
     const supabase = createClient();

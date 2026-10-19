@@ -109,7 +109,7 @@ export default function RegisterPage() {
             Back to sign in
           </Button>
           <p className="mt-4 text-sm text-muted-foreground">
-            Didn't get the email? Check your spam folder and try again in a few
+            Didn&apos;t get the email? Check your spam folder and try again in a few
             minutes.
           </p>
         </div>

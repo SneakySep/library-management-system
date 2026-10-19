@@ -5,7 +5,7 @@ import { getLibrarySettings } from '@/lib/settings';
 
 /** Returns the admin client when the caller is a librarian, or an error response. */
 async function getLibrarianContext() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

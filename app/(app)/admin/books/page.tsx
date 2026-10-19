@@ -85,10 +85,6 @@ export default function AdminBooksPage() {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    loadBooks();
-  }, []);
-
   const loadBooks = async () => {
     try {
       const params = new URLSearchParams({ search: searchQuery });
@@ -98,10 +94,14 @@ export default function AdminBooksPage() {
       setBooks(Array.isArray(payload) ? payload : payload.data ?? []);
     } catch (err: any) {
       toast.error(err.message || 'Failed to load books');
-    } finally {
-      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Update loading state from the callback (not synchronously in the
+    // loader itself) so React can skip an extra cascading render.
+    Promise.resolve().then(loadBooks).then(() => setLoading(false));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -77,9 +77,14 @@ export function BookCatalog() {
   const debouncedQuery = useDebounce(query, 300);
   const activeFilterCount = getActiveFilterCount(filters);
 
-  // Keep in sync when the URL changes (e.g. searching from the navbar or dashboard while on this page)
+  // Keep in sync when the URL changes (e.g. searching from the navbar or
+  // dashboard while on this page). Adjusting state during render is React's
+  // recommended pattern for derived state — an effect here would cause an
+  // extra cascading render.
   const searchParamsString = searchParams.toString();
-  useEffect(() => {
+  const [lastSearchParams, setLastSearchParams] = useState(searchParamsString);
+  if (searchParamsString !== lastSearchParams) {
+    setLastSearchParams(searchParamsString);
     const params = new URLSearchParams(searchParamsString);
     setQuery(params.get('search') ?? '');
     setFilters((prev) => ({
@@ -89,7 +94,8 @@ export function BookCatalog() {
       publicationYear: params.get('publication_year') ?? '',
       minRating: params.get('min_rating') ?? '',
     }));
-  }, [searchParamsString]);
+    setPage(1);
+  }
 
   const { data, isLoading, error, refetch } = useQuery<{
     data: Book[];
@@ -116,11 +122,6 @@ export function BookCatalog() {
   const totalCount = data?.count ?? 0;
   const totalPages = Math.ceil(totalCount / pageSize);
 
-  // Reset to page 1 when query or filters change
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedQuery, filters]);
-
   const handleViewChange = useCallback((next: ViewMode) => setView(next), []);
 
   const clearFilters = () => {
@@ -130,6 +131,7 @@ export function BookCatalog() {
       publicationYear: '',
       minRating: '',
     });
+    setPage(1);
     setOpenFilters(false);
   };
 
@@ -140,6 +142,7 @@ export function BookCatalog() {
       else next[key] = '';
       return next;
     });
+    setPage(1);
   };
 
   const handleRetry = () => {
@@ -179,7 +182,13 @@ export function BookCatalog() {
             )}
           </Button>
           <div className="relative w-full lg:w-[300px] shrink">
-            <SearchBar value={query} onChange={(e) => setQuery(e.target.value)} />
+            <SearchBar
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setPage(1);
+              }}
+            />
           </div>
             <ViewToggle view={view} onChange={handleViewChange} />
           </div>
@@ -258,7 +267,10 @@ export function BookCatalog() {
           </SheetHeader>
           <BookFilters
             filters={filters}
-            onChange={setFilters}
+            onChange={(next) => {
+              setFilters(next);
+              setPage(1);
+            }}
             genres={GENRES}
           />
           <div className="p-4 border-t border-border flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">

@@ -29,7 +29,7 @@ A full-stack library management web app: **members** browse and borrow books, **
 
 | Layer | Choice |
 | --- | --- |
-| Framework | Next.js 14 (App Router) · React 18 |
+| Framework | Next.js 16 (App Router) · React 19 |
 | Language | TypeScript |
 | Styling | Tailwind CSS + shadcn/ui-style components (Radix UI) |
 | Backend | Supabase — Postgres, Auth, Row Level Security |

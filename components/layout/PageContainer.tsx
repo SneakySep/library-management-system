@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 
 const WIDTHS = {
-  wide: 'max-w-7xl',
+  wide: 'max-w-none',
   medium: 'max-w-5xl',
   narrow: 'max-w-3xl',
 } as const;
@@ -10,6 +10,8 @@ const WIDTHS = {
  * Standard page wrapper for every route inside the (app) shell.
  * Keeps horizontal padding, vertical rhythm and content width identical
  * everywhere so pages cannot drift apart as new ones are added.
+ * `wide` (the default) spans the full content area; `medium` and `narrow`
+ * cap the width for form-centric pages.
  */
 export function PageContainer({
   children,
